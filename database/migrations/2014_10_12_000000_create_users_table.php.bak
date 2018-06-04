@@ -1,0 +1,44 @@
+<?php
+
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateUsersTable extends Migration{
+    //执行数据库迁移
+    public function up(){
+        //建立数据库
+        Schema::create('users', function(Blueprint $table){
+            $table -> increments('id');
+            $table -> string('username', 32);
+            $table -> string('account', 32);
+            $table -> string('password', 60);
+            $table -> rememberToken();
+            $table -> unsignedInteger('addtime');
+            $table -> tinyInteger('state') -> unsigned() -> default(1);
+        });
+        //建立分类表
+        Schema::create('tb_category', function(Blueprint $table){
+            $table -> increments('id');
+            $table -> string('name', 32);
+            $table -> unsignedInteger('count') -> default(0);
+            $table -> integer('uid'); //用户id
+            $table -> tinyInteger('state') -> unsigned() -> default(0); //分类的状态，确认是否被删除，1为正常，0为删除
+        });
+        //建立笔记内容表
+        Schema::create('tb_records', function(Blueprint $table){
+            $table -> increments('id');
+            $table -> string('table', 64);
+            $table -> text('content') -> nullable();
+            $table -> integer('cid'); //笔记类型的id
+            $table -> integer('uid'); //用户的id
+            $table -> unsignedInteger('addtime') -> default(0);
+            $table -> tinyInteger('state') -> default(1) -> unsigned();
+        });
+    }
+    //返回数据库迁移
+    public function down(){
+        Schema::drop('tb_category');
+        Schema::drop('tb_records');
+        Schema::drop('users');
+    }
+}
